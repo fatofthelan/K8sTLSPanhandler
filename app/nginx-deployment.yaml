@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -v convert -f docker-compose.yml.back --volumes hostPath
+      -o hostPath/
+    kompose.version: 1.21.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -v convert -f docker-compose.yml.back --volumes hostPath
+          -o hostPath/
+        kompose.version: 1.21.0 ()
+      creationTimestamp: null
+      labels:
+        io.kompose.network/ph-backend: "true"
+        io.kompose.network/ph-frontend: "true"
+        io.kompose.service: nginx
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: ""
+        name: nginx
+        ports:
+        - containerPort: 4433
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-hostpath0
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - hostPath:
+          path: /home/tobias/kubtls/conf.d
+        name: nginx-hostpath0
+status: {}
